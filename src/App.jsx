@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 
 import './App.css';
-import Three from 'components/Three/Three';
+import ThorusPlanet from 'components/ThorusPlanet/ThorusPlanet';
+import SomeSpace from 'components/SomeSpace/SomeSpace';
 
 const App = () => {
-  return <Three />;
+  return <SomeSpace />;
 };
 
 export default App;

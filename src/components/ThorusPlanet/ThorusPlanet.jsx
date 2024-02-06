@@ -1,12 +1,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { useEffect, useRef } from 'react';
 
-import spaceBg from 'assets/space.jpg';
-import moonBg from 'assets/moon.jpg';
+import spaceBg from 'assets/images/space.jpg';
+import moonBg from 'assets/images/moon.jpg';
+import surfaceBg from 'assets/images/surface.jpg';
 
-const Three = () => {
-  const refContainer = useRef(null);
+const ThorusPlanet = () => {
+  const refPlanet = useRef(null);
 
   useEffect(() => {
     const scene = new THREE.Scene();
@@ -16,15 +18,16 @@ const Three = () => {
       0.1,
       1000,
     );
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    // document.body.appendChild( renderer.domElement );
-    // use ref as a mount point of the Three.js scene instead of the document.body
-    refContainer.current &&
-      refContainer.current.appendChild(renderer.domElement);
+
+    refPlanet.current && refPlanet.current.appendChild(renderer.domElement);
 
     camera.position.setZ(60);
+    // camera.position.setZ(1.5);
+    // camera.position.setY(0);
+    // camera.position.setX(-1.5);
 
     const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -57,7 +60,8 @@ const Three = () => {
       });
       const thorus = new THREE.Mesh(geometry, material);
 
-      thorus.position.set(0, 0, 25);
+      thorus.rotateY(Math.PI / 2);
+      thorus.position.set(-25, 0, 0);
 
       scene.add(thorus);
     };
@@ -79,16 +83,19 @@ const Three = () => {
       scene.add(sphere);
     };
 
-    Array(200).fill().forEach(addSphere);
+    Array(400).fill().forEach(addSphere);
 
     // moon
     const addMoon = () => {
+      const geometry = new THREE.SphereGeometry(12, 32, 32);
       const moonTexture = new THREE.TextureLoader().load(moonBg);
+      const normalTexture = new THREE.TextureLoader().load(surfaceBg);
+      const material = new THREE.MeshStandardMaterial({
+        map: moonTexture,
+        normalMap: normalTexture,
+      });
 
-      const moon = new THREE.Mesh(
-        new THREE.SphereGeometry(12, 32, 32),
-        new THREE.MeshStandardMaterial({ map: moonTexture }),
-      );
+      const moon = new THREE.Mesh(geometry, material);
 
       scene.add(moon);
     };
@@ -96,7 +103,7 @@ const Three = () => {
     addMoon();
   }, []);
 
-  return <div ref={refContainer}></div>;
+  return <div ref={refPlanet}></div>;
 };
 
-export default Three;
+export default ThorusPlanet;
